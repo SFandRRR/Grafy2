@@ -1,4 +1,4 @@
-package com.example.grafy1
+package com.example.grafy2
 
 import android.app.PendingIntent.getActivity
 import androidx.appcompat.app.AppCompatActivity
@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
             ConnectedTo = IntArray(0)
             for(i in 0..Connections.size-1){
                 if(Connections[i]==1){
-                    ConnectedTo.plus(i+1)
+                    ConnectedTo+=i+1
                 }
             }
         }
@@ -41,11 +41,12 @@ class MainActivity : AppCompatActivity() {
     }// End of class Vertex
 
     class Matrix(val NumberOfVertices : Int){
-        val Verticies : Array<Vertex> = emptyArray()
+        var Verticies : Array<Vertex> = arrayOf(Vertex(NumberOfVertices))
+        val NOV = NumberOfVertices
 
         fun CreateVerticies(){
-            for( i in 0..Verticies.size-1){
-                Verticies.plus(Vertex(NumberOfVertices))
+            for( i in 0..NOV-2){
+                Verticies = Verticies+ arrayOf(Vertex(NOV))
             }
         }
     }// End of class Matrix
@@ -68,27 +69,32 @@ class MainActivity : AppCompatActivity() {
         val Input_Data : EditText = findViewById(R.id.EditText_data)
 
         val MacierzSize = 4
+
         var ConnectWith = 1
-        var NV = Slider_Vertex.progress
+        var NV = 0
 
         val Macierz = Matrix(MacierzSize)
         Macierz.CreateVerticies()
+        Toast.makeText(applicationContext, Macierz.Verticies.size.toString(), Toast.LENGTH_SHORT).show()
 
         Slider_Vertex.max=MacierzSize
         Slider_Connector.max=MacierzSize
 
         fun UpdateVertexInfo(){
 
-            Label_VertexNum.text=NV.toString()+"\nPołączony z: "
+            var str =""
+            str+=NV.toString()+"\nPołączony z: "
             for(i in Macierz.Verticies[NV-1].ConnectedTo){
-                Label_VertexNum.text=i.toString()+","
+                str+=i.toString()+","
             }
-            Label_VertexNum.text="\nWartość : "+Macierz.Verticies[NV-1].Data
+            str+="\nWartość : "+Macierz.Verticies[NV-1].Data
+            Label_VertexNum.text=str
         }
 
         Button_ConnectVertex.setOnClickListener(){
             if(!(ConnectWith==NV)){
-                Macierz.Verticies[NV-1].Connect(ConnectWith-1,1)
+                Macierz.Verticies[NV-1].Connect(ConnectWith,1)
+                Macierz.Verticies[ConnectWith-1].Connect(NV,1)
                 UpdateVertexInfo()
             }else{
                 Toast.makeText(applicationContext, "Nie można połączyć samego z sobą", Toast.LENGTH_SHORT).show()
@@ -97,7 +103,8 @@ class MainActivity : AppCompatActivity() {
 
         Button_DisconnectVertex.setOnClickListener(){
             if(!(ConnectWith==NV)){
-                Macierz.Verticies[NV-1].Connect(ConnectWith-1,0)
+                Macierz.Verticies[NV-1].Connect(ConnectWith,0)
+                Macierz.Verticies[ConnectWith-1].Connect(NV,1)
                 UpdateVertexInfo()
             }else{
                 Toast.makeText(applicationContext, "Nie można połączyć samego z sobą", Toast.LENGTH_SHORT).show()
@@ -107,10 +114,12 @@ class MainActivity : AppCompatActivity() {
         Button_AddData.setOnClickListener(){
             Macierz.Verticies[NV-1].Data=Input_Data.text.toString()
             Toast.makeText(applicationContext, "Dodano!", Toast.LENGTH_SHORT).show()
+            UpdateVertexInfo()
         }
 
         Slider_Vertex.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                NV = Slider_Vertex.progress
                 UpdateVertexInfo()
             }
 
