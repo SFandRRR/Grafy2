@@ -80,6 +80,95 @@ class MainActivity : AppCompatActivity() {
         Slider_Vertex.max=MacierzSize
         Slider_Connector.max=MacierzSize
 
+        fun DFS_Path(Vstart : Int, Vend : Int ){
+            var Path : Array<Int> = IntArray(Macierz.size)
+            var Visited : Array<Bool> = BooleanArray(Macierz.size)
+
+            var Stos : Array<Int> = IntArray(Macierz.size)
+            var StosLE =0
+
+            var CurrentVertex
+            var NextVertex
+
+
+            for(i in 0..Visited.size-1){
+                Visited[i]=false
+            }
+            Visited[Vstart]=true
+            Path[Vstart]=-1
+            Stos[0]=Vstart
+
+            While(Stos[0]==-1){
+                CurrentVertex=Stos[StosLE]
+                Stos[StosLE]=-1
+                if(CurrentVertex==Vend){
+                    while(CurrentVertex>-1){
+                        Label_VertexNum.text=Label_VertexNum.text+CurrentVertex.toString+" "
+                        CurrentVertex=Path[CurrentVertex]
+                    }
+                }
+                for(NV in Macierz.Verticies[CurrentVertex].ConnectedTo){
+                    NV=NV-1
+                    if(Visited[NV]==false){
+                        Path[NV]=CurrentVertex
+                        StosLE++
+                        Stos[StosLE]=NV
+                        Visited[NV]==true
+                    }
+                }
+            }
+            Label_VertexNum.text=Label_VertexNum.text+" Brak"
+        }
+
+
+        fun BFS_Path(Vstart : Int, Vend : Int ){
+            var Path : Array<Int> = IntArray(Macierz.size)
+            var Visited : Array<Bool> = BooleanArray(Macierz.size)
+
+            var Queue : Array<Int> = IntArray(Macierz.size)
+            var QFSpot =0
+
+            var CurrentVertex
+            var NextVertex
+
+
+            for(i in 0..Visited.size-1){
+                Visited[i]=false
+            }
+            Visited[Vstart]=true
+            Path[Vstart]=-1
+            Queue[QFSpot]=Vstart
+            QFSpot++
+
+
+            While(Stos[0]==-1){
+                CurrentVertex=Queue[0]
+
+                for(i in 1..Queue.size-1){
+                    Queue[i-1]=Queue[i]
+                }
+                Queue[Queue.size-1]=null
+                QFSpot--
+
+                if(CurrentVertex==Vend){
+                    while(CurrentVertex>-1){
+                        Label_VertexNum.text=Label_VertexNum.text+CurrentVertex.toString+" "
+                        CurrentVertex=Path[CurrentVertex]
+                    }
+                }
+                for(NV in Macierz.Verticies[CurrentVertex].ConnectedTo){
+                    NV=NV-1
+                    if(Visited[NV]==false){
+                        Path[NV]=CurrentVertex
+                        Queue[QFSpot]=NV
+                        QFSpot++
+                        Visited[NV]==true
+                    }
+                }
+            }
+            Label_VertexNum.text=Label_VertexNum.text+" Brak"
+        }
+
         fun UpdateVertexInfo(){
 
             var str =""
