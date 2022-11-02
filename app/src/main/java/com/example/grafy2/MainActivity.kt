@@ -63,6 +63,9 @@ class MainActivity : AppCompatActivity() {
         val Button_DisconnectVertex : Button = findViewById(R.id.Button_DisconnectVertex)
         val Button_AddData : Button = findViewById(R.id.Button_AddDataToVertex)
 
+        val Button_DFS : Button = findViewById(R.id.button_DFS)
+        val Button_BFS : Button = findViewById(R.id.button_BFS)
+
         val Slider_Vertex : SeekBar = findViewById(R.id.SeekBar_Vertex)
         val Slider_Connector : SeekBar = findViewById(R.id.SeekBar_ConnectWith)
 
@@ -81,14 +84,14 @@ class MainActivity : AppCompatActivity() {
         Slider_Connector.max=MacierzSize
 
         fun DFS_Path(Vstart : Int, Vend : Int ){
-            var Path : Array<Int> = IntArray(Macierz.size)
-            var Visited : Array<Bool> = BooleanArray(Macierz.size)
+            var Path : IntArray= IntArray(Macierz.Verticies.size)
+            var Visited : BooleanArray= BooleanArray(Macierz.Verticies.size)
 
-            var Stos : Array<Int> = IntArray(Macierz.size)
+            var Stos : IntArray = IntArray(Macierz.Verticies.size)
             var StosLE =0
 
-            var CurrentVertex
-            var NextVertex
+            var CurrentVertex=0
+            var NextVertex=0
 
 
             for(i in 0..Visited.size-1){
@@ -98,38 +101,38 @@ class MainActivity : AppCompatActivity() {
             Path[Vstart]=-1
             Stos[0]=Vstart
 
-            While(Stos[0]==-1){
+            while(Stos[0]!=-1){
                 CurrentVertex=Stos[StosLE]
                 Stos[StosLE]=-1
                 if(CurrentVertex==Vend){
                     while(CurrentVertex>-1){
-                        Label_VertexNum.text=Label_VertexNum.text+CurrentVertex.toString+" "
+                        Label_VertexNum.text=Label_VertexNum.text.toString()+CurrentVertex.toString()+" "
                         CurrentVertex=Path[CurrentVertex]
                     }
                 }
                 for(NV in Macierz.Verticies[CurrentVertex].ConnectedTo){
-                    NV=NV-1
-                    if(Visited[NV]==false){
-                        Path[NV]=CurrentVertex
+                    var NeV=NV-1
+                    if(Visited[NeV]==false){
+                        Path[NeV]=CurrentVertex
                         StosLE++
-                        Stos[StosLE]=NV
-                        Visited[NV]==true
+                        Stos[StosLE]=NeV
+                        Visited[NeV]==true
                     }
                 }
             }
-            Label_VertexNum.text=Label_VertexNum.text+" Brak"
+            Label_VertexNum.text=Label_VertexNum.text.toString()+" Brak"
         }
 
 
         fun BFS_Path(Vstart : Int, Vend : Int ){
-            var Path : Array<Int> = IntArray(Macierz.size)
-            var Visited : Array<Bool> = BooleanArray(Macierz.size)
+            var Path : IntArray= IntArray(Macierz.Verticies.size)
+            var Visited : BooleanArray = BooleanArray(Macierz.Verticies.size)
 
-            var Queue : Array<Int> = IntArray(Macierz.size)
+            var Queue : IntArray = IntArray(Macierz.Verticies.size)
             var QFSpot =0
 
-            var CurrentVertex
-            var NextVertex
+            var CurrentVertex=0
+            var NextVertex=0
 
 
             for(i in 0..Visited.size-1){
@@ -141,32 +144,32 @@ class MainActivity : AppCompatActivity() {
             QFSpot++
 
 
-            While(Stos[0]==-1){
+            while(Queue[0]!=-1){
                 CurrentVertex=Queue[0]
 
                 for(i in 1..Queue.size-1){
                     Queue[i-1]=Queue[i]
                 }
-                Queue[Queue.size-1]=null
+                Queue[Queue.size-1]=-1
                 QFSpot--
 
                 if(CurrentVertex==Vend){
                     while(CurrentVertex>-1){
-                        Label_VertexNum.text=Label_VertexNum.text+CurrentVertex.toString+" "
+                        Label_VertexNum.text=Label_VertexNum.text.toString()+CurrentVertex.toString()+" "
                         CurrentVertex=Path[CurrentVertex]
                     }
                 }
                 for(NV in Macierz.Verticies[CurrentVertex].ConnectedTo){
-                    NV=NV-1
-                    if(Visited[NV]==false){
-                        Path[NV]=CurrentVertex
-                        Queue[QFSpot]=NV
+                    var NeV=NV-1
+                    if(Visited[NeV]==false){
+                        Path[NeV]=CurrentVertex
+                        Queue[QFSpot]=NeV
                         QFSpot++
-                        Visited[NV]==true
+                        Visited[NeV]==true
                     }
                 }
             }
-            Label_VertexNum.text=Label_VertexNum.text+" Brak"
+            Label_VertexNum.text=Label_VertexNum.text.toString()+" Brak"
         }
 
         fun UpdateVertexInfo(){
@@ -178,6 +181,13 @@ class MainActivity : AppCompatActivity() {
             }
             str+="\nWartość : "+Macierz.Verticies[NV-1].Data
             Label_VertexNum.text=str
+        }
+
+        Button_DFS.setOnClickListener(){
+            DFS_Path(0,3)
+        }
+        Button_BFS.setOnClickListener(){
+            DFS_Path(0,3)
         }
 
         Button_ConnectVertex.setOnClickListener(){

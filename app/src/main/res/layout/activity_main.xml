@@ -72,6 +72,18 @@
                 android:layout_height="wrap_content"
                 android:text="Dodaj tekst" />
 
+            <Button
+                android:id="@+id/button_BFS"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="BFS" />
+
+            <Button
+                android:id="@+id/button_DFS"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="DFS" />
+
         </LinearLayout>
     </ScrollView>
 
