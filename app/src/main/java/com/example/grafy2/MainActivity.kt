@@ -58,10 +58,13 @@ class MainActivity : AppCompatActivity() {
 
 
         val Label_VertexNum : TextView = findViewById(R.id.TextView_Vertex)
+        val Label_Path : TextView = findViewById(R.id.TextView_Path)
 
         val Button_ConnectVertex : Button = findViewById(R.id.Button_ConnectVertex)
         val Button_DisconnectVertex : Button = findViewById(R.id.Button_DisconnectVertex)
         val Button_AddData : Button = findViewById(R.id.Button_AddDataToVertex)
+
+        val Button_CreateMatrix : Button = findViewById(R.id.Button_CreateMacierz)
 
         val Button_DFS : Button = findViewById(R.id.button_DFS)
         val Button_BFS : Button = findViewById(R.id.button_BFS)
@@ -69,58 +72,104 @@ class MainActivity : AppCompatActivity() {
         val Slider_Vertex : SeekBar = findViewById(R.id.SeekBar_Vertex)
         val Slider_Connector : SeekBar = findViewById(R.id.SeekBar_ConnectWith)
 
+        val Slider_PFrom : SeekBar = findViewById(R.id.SeekBar_PathFrom)
+        val Slider_PTo : SeekBar = findViewById(R.id.SeekBar_Pathto)
+
+        var Slider_MSize : SeekBar = findViewById(R.id.SeekBar_MacierzSize)
+
         val Input_Data : EditText = findViewById(R.id.EditText_data)
 
-        val MacierzSize = 4
+        var SeekMSize = 4
+        var MacierzSize = 4
 
         var ConnectWith = 1
-        var NV = 0
+        var NV = 1
 
-        val Macierz = Matrix(MacierzSize)
+        var SearchFrom = 0
+        var SearchTo = 0
+
+        var Macierz = Matrix(MacierzSize)
         Macierz.CreateVerticies()
         Toast.makeText(applicationContext, Macierz.Verticies.size.toString(), Toast.LENGTH_SHORT).show()
 
         Slider_Vertex.max=MacierzSize
         Slider_Connector.max=MacierzSize
 
+        Slider_PFrom.max=MacierzSize
+        Slider_PTo.max=MacierzSize
+
+        Button_CreateMatrix.setOnClickListener {
+
+            MacierzSize = SeekMSize
+            Macierz = Matrix(MacierzSize)
+            Macierz.CreateVerticies()
+            Toast.makeText(applicationContext, Macierz.Verticies.size.toString(), Toast.LENGTH_SHORT).show()
+
+            Slider_Vertex.max=MacierzSize
+            Slider_Connector.max=MacierzSize
+
+            Slider_PFrom.max=MacierzSize
+            Slider_PTo.max=MacierzSize
+        }
+
         fun DFS_Path(Vstart : Int, Vend : Int ){
             var Path : IntArray= IntArray(Macierz.Verticies.size)
             var Visited : BooleanArray= BooleanArray(Macierz.Verticies.size)
 
-            var Stos : IntArray = IntArray(Macierz.Verticies.size)
-            var StosLE =0
+            var Stos = ArrayDeque<Int>()
 
             var CurrentVertex=0
             var NextVertex=0
 
+            var found = false
 
             for(i in 0..Visited.size-1){
                 Visited[i]=false
             }
+
             Visited[Vstart]=true
             Path[Vstart]=-1
-            Stos[0]=Vstart
+            Stos.add(Vstart)
 
-            while(Stos[0]!=-1){
-                CurrentVertex=Stos[StosLE]
-                Stos[StosLE]=-1
+            while(Stos.isEmpty()==false){
+
+                CurrentVertex=Stos.first()
+                Stos.removeFirst()
+
+                for(i in Stos){
+                    Label_Path.text=Label_Path.text.toString()+i.toString()+" "
+                }
+
                 if(CurrentVertex==Vend){
+                    Label_Path.text="Wynik: "
+                    found=true
                     while(CurrentVertex>-1){
-                        Label_VertexNum.text=Label_VertexNum.text.toString()+CurrentVertex.toString()+" "
+                        Label_Path.text=Label_Path.text.toString()+(CurrentVertex+1).toString()+" "
                         CurrentVertex=Path[CurrentVertex]
                     }
+                    break
                 }
+
+
                 for(NV in Macierz.Verticies[CurrentVertex].ConnectedTo){
-                    var NeV=NV-1
+                    var NeV=0
+                    if(NV!=0){
+                        NeV=NV-1
+                    }
+
                     if(Visited[NeV]==false){
                         Path[NeV]=CurrentVertex
-                        StosLE++
-                        Stos[StosLE]=NeV
+                        Stos.add(NeV)
                         Visited[NeV]==true
+                        for(i in Stos){
+                            Label_Path.text=Label_Path.text.toString()+i.toString()+" "
+                        }
                     }
                 }
             }
-            Label_VertexNum.text=Label_VertexNum.text.toString()+" Brak"
+            if(found==false) {
+                Label_Path.text = Label_Path.text.toString() + "Brak ścieżki "
+            }
         }
 
 
@@ -155,12 +204,13 @@ class MainActivity : AppCompatActivity() {
 
                 if(CurrentVertex==Vend){
                     while(CurrentVertex>-1){
-                        Label_VertexNum.text=Label_VertexNum.text.toString()+CurrentVertex.toString()+" "
+                        Label_Path.text=Label_Path.text.toString()+CurrentVertex.toString()+" "
                         CurrentVertex=Path[CurrentVertex]
                     }
                 }
                 for(NV in Macierz.Verticies[CurrentVertex].ConnectedTo){
                     var NeV=NV-1
+                    Label_Path.text=NeV.toString()+" "
                     if(Visited[NeV]==false){
                         Path[NeV]=CurrentVertex
                         Queue[QFSpot]=NeV
@@ -169,7 +219,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
-            Label_VertexNum.text=Label_VertexNum.text.toString()+" Brak"
+            Label_Path.text=Label_Path.text.toString()+" Brak"
         }
 
         fun UpdateVertexInfo(){
@@ -182,18 +232,29 @@ class MainActivity : AppCompatActivity() {
             str+="\nWartość : "+Macierz.Verticies[NV-1].Data
             Label_VertexNum.text=str
         }
+        UpdateVertexInfo()
+
 
         Button_DFS.setOnClickListener(){
-            DFS_Path(0,3)
+            Label_Path.text=""
+            if(SearchFrom!=SearchTo){
+                DFS_Path(SearchFrom-1,SearchTo-1)
+            }else{
+                Label_Path.text="Ścieżka do samego siebie!"
+            }
         }
         Button_BFS.setOnClickListener(){
-            DFS_Path(0,3)
+            Label_Path.text=""
+            if(SearchFrom!=SearchTo){
+                BFS_Path(SearchFrom-1,SearchTo-1)
+            }else{
+                Label_Path.text="Ścieżka do samego siebie!"
+            }
         }
 
         Button_ConnectVertex.setOnClickListener(){
             if(!(ConnectWith==NV)){
                 Macierz.Verticies[NV-1].Connect(ConnectWith,1)
-                Macierz.Verticies[ConnectWith-1].Connect(NV,1)
                 UpdateVertexInfo()
             }else{
                 Toast.makeText(applicationContext, "Nie można połączyć samego z sobą", Toast.LENGTH_SHORT).show()
@@ -203,7 +264,6 @@ class MainActivity : AppCompatActivity() {
         Button_DisconnectVertex.setOnClickListener(){
             if(!(ConnectWith==NV)){
                 Macierz.Verticies[NV-1].Connect(ConnectWith,0)
-                Macierz.Verticies[ConnectWith-1].Connect(NV,1)
                 UpdateVertexInfo()
             }else{
                 Toast.makeText(applicationContext, "Nie można połączyć samego z sobą", Toast.LENGTH_SHORT).show()
@@ -234,6 +294,47 @@ class MainActivity : AppCompatActivity() {
                 ConnectWith = progress
                 Button_ConnectVertex.text="Połącz z "+progress.toString()
                 Button_DisconnectVertex.text="Rozłącz z "+progress.toString()
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar) {
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+            }
+        })
+
+        Slider_PFrom.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                SearchFrom = progress
+                Button_BFS.text="(BFS) Szukaj ścieżki od "+SearchFrom.toString()+" do "+SearchTo.toString()
+                Button_DFS.text="(DFS) Szukaj ścieżki od "+SearchFrom.toString()+" do "+SearchTo.toString()
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar) {
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+            }
+        })
+
+        Slider_PTo.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                SearchTo = progress
+                Button_BFS.text="(BFS) Szukaj ścieżki od "+SearchFrom.toString()+" do "+SearchTo.toString()
+                Button_DFS.text="(DFS) Szukaj ścieżki od "+SearchFrom.toString()+" do "+SearchTo.toString()
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar) {
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+            }
+        })
+
+        Slider_MSize.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                SeekMSize = progress
+                Button_CreateMatrix.text="Utwórz Macierz o wielkości "+SeekMSize.toString()
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {

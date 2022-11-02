@@ -18,6 +18,21 @@
             android:orientation="vertical">
 
             <SeekBar
+                android:id="@+id/SeekBar_MacierzSize"
+                android:layout_width="369dp"
+                android:layout_height="36dp"
+                android:min="1"
+                android:max="100"
+                android:progress="4"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="16dp" />
+            <Button
+                android:id="@+id/Button_CreateMacierz"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Utwórz Macierz o wielkości 4" />
+
+            <SeekBar
                 android:id="@+id/SeekBar_Vertex"
                 android:layout_width="369dp"
                 android:layout_height="36dp"
@@ -72,17 +87,47 @@
                 android:layout_height="wrap_content"
                 android:text="Dodaj tekst" />
 
-            <Button
-                android:id="@+id/button_BFS"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="BFS" />
+            <TextView
+                android:id="@+id/TextView_Path"
+                android:layout_width="378dp"
+                android:layout_height="50dp"
+                android:text="None"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <SeekBar
+                android:id="@+id/SeekBar_PathFrom"
+                android:layout_width="369dp"
+                android:layout_height="36dp"
+                android:min="1"
+                android:max="1"
+                android:progress="1"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="16dp" />
+
+            <SeekBar
+                android:id="@+id/SeekBar_Pathto"
+                android:layout_width="369dp"
+                android:layout_height="36dp"
+                android:min="1"
+                android:max="1"
+                android:progress="1"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="16dp" />
 
             <Button
                 android:id="@+id/button_DFS"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="DFS" />
+                android:text="Szukaj ścieżki DFS" />
+
+            <Button
+                android:id="@+id/button_BFS"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Szukaj ścieżki BFS" />
 
         </LinearLayout>
     </ScrollView>
