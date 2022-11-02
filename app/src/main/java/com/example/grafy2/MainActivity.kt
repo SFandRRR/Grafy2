@@ -8,6 +8,7 @@ import android.util.Log
 import android.util.Log.DEBUG
 import android.widget.*
 import com.example.grafy2.R
+import java.util.Queue
 
 
 class MainActivity : AppCompatActivity() {
@@ -177,8 +178,9 @@ class MainActivity : AppCompatActivity() {
             var Path : IntArray= IntArray(Macierz.Verticies.size)
             var Visited : BooleanArray = BooleanArray(Macierz.Verticies.size)
 
-            var Queue : IntArray = IntArray(Macierz.Verticies.size)
-            var QFSpot =0
+            var found = false
+
+            var Queue = ArrayDeque<Int>()
 
             var CurrentVertex=0
             var NextVertex=0
@@ -189,37 +191,35 @@ class MainActivity : AppCompatActivity() {
             }
             Visited[Vstart]=true
             Path[Vstart]=-1
-            Queue[QFSpot]=Vstart
-            QFSpot++
+            Queue.add(Vstart)
 
 
-            while(Queue[0]!=-1){
-                CurrentVertex=Queue[0]
-
-                for(i in 1..Queue.size-1){
-                    Queue[i-1]=Queue[i]
-                }
-                Queue[Queue.size-1]=-1
-                QFSpot--
+            while(Queue.isEmpty()==false){
+                CurrentVertex=Queue.first()
+                Queue.removeFirst()
 
                 if(CurrentVertex==Vend){
+                    Label_Path.text="Wynik: "
+                    found=true
                     while(CurrentVertex>-1){
-                        Label_Path.text=Label_Path.text.toString()+CurrentVertex.toString()+" "
+                        Label_Path.text=Label_Path.text.toString()+(CurrentVertex+1).toString()+" "
                         CurrentVertex=Path[CurrentVertex]
                     }
+                    break
                 }
+
                 for(NV in Macierz.Verticies[CurrentVertex].ConnectedTo){
                     var NeV=NV-1
-                    Label_Path.text=NeV.toString()+" "
                     if(Visited[NeV]==false){
                         Path[NeV]=CurrentVertex
-                        Queue[QFSpot]=NeV
-                        QFSpot++
+                        Queue.add(NeV)
                         Visited[NeV]==true
                     }
                 }
             }
-            Label_Path.text=Label_Path.text.toString()+" Brak"
+            if(found==false) {
+                Label_Path.text = Label_Path.text.toString() + "Brak ścieżki "
+            }
         }
 
         fun UpdateVertexInfo(){
