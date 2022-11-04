@@ -260,9 +260,10 @@ class MainActivity : AppCompatActivity() {
                 if(u>=NOV){
                     break
                 }
-
                 ConWeight=0
+
                 for(i in 0..Macierz.Verticies[u].Connections.size-1){
+
                     if(Macierz.Verticies[u].Connections[i]>ConWeight){
                         ConWeight=Macierz.Verticies[u].Connections[i]
                         u=i
@@ -272,6 +273,8 @@ class MainActivity : AppCompatActivity() {
                 S[u]=Q[u]
                 Q[u]=-1
 
+
+
                 for(w in Macierz.Verticies[u].ConnectedTo){
                     var NeV=w-1
                     if(Q[NeV]!=-1){
@@ -279,19 +282,21 @@ class MainActivity : AppCompatActivity() {
                         if(Cost[NeV]>(Cost[u]+wagakrawedzi)){
                             Cost[NeV]=(Cost[u]+wagakrawedzi)
                             Prev[NeV]=u
+
                         }
                     }
                 }
 
                 QSum=0
                 for(i in Q){
-                    if(i==-1){
-                        QSum++
+                    if(i!=-1){
+                        QSum=1
+                        break
                     }
                 }
 
             }
-            for(i in 0..NOV){
+            for(i in 0..NOV-1){
                 Label_Path.text=Label_Path.text.toString()+(i+1).toString()+": "
                 var j=i
                 var sptr=0
