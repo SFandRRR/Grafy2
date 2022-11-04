@@ -62,6 +62,16 @@
                 tools:layout_editor_absoluteX="16dp"
                 tools:layout_editor_absoluteY="16dp" />
 
+            <SeekBar
+                android:id="@+id/SeekBar_ConnectionWeight"
+                android:layout_width="369dp"
+                android:layout_height="36dp"
+                android:min="1"
+                android:max="100"
+                android:progress="1"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="16dp" />
+
             <Button
                 android:id="@+id/Button_ConnectVertex"
                 android:layout_width="match_parent"

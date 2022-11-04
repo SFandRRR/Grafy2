@@ -18,10 +18,10 @@ class MainActivity : AppCompatActivity() {
         var ConnectedTo: IntArray = IntArray(0)
         var Data = ""
 
-        fun Connect(to : Int, how : Int){
+        fun Connect(to : Int, weight : Int){
             if(to >= 1 && to<=Connections.size){
-                if(how >= 0 && how<=1){
-                    Connections[to-1]=how
+                if(weight >= 0){
+                    Connections[to-1]=weight
                 }
             }
             UpdateConnectedTo()
@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
         fun UpdateConnectedTo(){
             ConnectedTo = IntArray(0)
             for(i in 0..Connections.size-1){
-                if(Connections[i]==1){
+                if(Connections[i]>=1){
                     ConnectedTo+=i+1
                 }
             }
@@ -77,6 +77,7 @@ class MainActivity : AppCompatActivity() {
         val Slider_PTo : SeekBar = findViewById(R.id.SeekBar_Pathto)
 
         var Slider_MSize : SeekBar = findViewById(R.id.SeekBar_MacierzSize)
+        var Slider_ConW : SeekBar = findViewById(R.id.SeekBar_ConnectionWeight)
 
         val Input_Data : EditText = findViewById(R.id.EditText_data)
 
@@ -85,6 +86,8 @@ class MainActivity : AppCompatActivity() {
 
         var ConnectWith = 1
         var NV = 1
+
+        var ConnectionWeight=0
 
         var SearchFrom = 0
         var SearchTo = 0
@@ -227,7 +230,7 @@ class MainActivity : AppCompatActivity() {
             var str =""
             str+=NV.toString()+"\nPołączony z: "
             for(i in Macierz.Verticies[NV-1].ConnectedTo){
-                str+=i.toString()+","
+                str+=" "+i.toString()+" W:"+Macierz.Verticies[NV-1].Connections[i-1]+","
             }
             str+="\nWartość : "+Macierz.Verticies[NV-1].Data
             Label_VertexNum.text=str
@@ -254,7 +257,7 @@ class MainActivity : AppCompatActivity() {
 
         Button_ConnectVertex.setOnClickListener(){
             if(!(ConnectWith==NV)){
-                Macierz.Verticies[NV-1].Connect(ConnectWith,1)
+                Macierz.Verticies[NV-1].Connect(ConnectWith,ConnectionWeight)
                 UpdateVertexInfo()
             }else{
                 Toast.makeText(applicationContext, "Nie można połączyć samego z sobą", Toast.LENGTH_SHORT).show()
@@ -292,8 +295,8 @@ class MainActivity : AppCompatActivity() {
         Slider_Connector.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 ConnectWith = progress
-                Button_ConnectVertex.text="Połącz z "+progress.toString()
-                Button_DisconnectVertex.text="Rozłącz z "+progress.toString()
+                Button_ConnectVertex.text="Połącz do "+ConnectWith.toString()+" o wadze "+ConnectionWeight.toString()
+                Button_DisconnectVertex.text="Rozłącz od "+ConnectWith.toString()
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {
@@ -335,6 +338,20 @@ class MainActivity : AppCompatActivity() {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 SeekMSize = progress
                 Button_CreateMatrix.text="Utwórz Macierz o wielkości "+SeekMSize.toString()
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar) {
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+            }
+        })
+
+        Slider_ConW.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                ConnectionWeight = progress
+                Button_ConnectVertex.text="Połącz do "+ConnectWith.toString()+" o wadze "+ConnectionWeight.toString()
+                Button_DisconnectVertex.text="Rozłącz od "+ConnectWith.toString()
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {
