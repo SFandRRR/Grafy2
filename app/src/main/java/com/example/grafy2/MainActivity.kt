@@ -1,6 +1,7 @@
 package com.example.grafy2
 
 import android.app.PendingIntent.getActivity
+import android.os.Build.VERSION_CODES.S
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Config.DEBUG
@@ -69,6 +70,7 @@ class MainActivity : AppCompatActivity() {
 
         val Button_DFS : Button = findViewById(R.id.button_DFS)
         val Button_BFS : Button = findViewById(R.id.button_BFS)
+        val Button_Dijkstry : Button = findViewById(R.id.button_Dijkstry)
 
         val Slider_Vertex : SeekBar = findViewById(R.id.SeekBar_Vertex)
         val Slider_Connector : SeekBar = findViewById(R.id.SeekBar_ConnectWith)
@@ -87,10 +89,10 @@ class MainActivity : AppCompatActivity() {
         var ConnectWith = 1
         var NV = 1
 
-        var ConnectionWeight=0
+        var ConnectionWeight=1
 
-        var SearchFrom = 0
-        var SearchTo = 0
+        var SearchFrom = 1
+        var SearchTo = 1
 
         var Macierz = Matrix(MacierzSize)
         Macierz.CreateVerticies()
@@ -176,7 +178,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-
         fun BFS_Path(Vstart : Int, Vend : Int ){
             var Path : IntArray= IntArray(Macierz.Verticies.size)
             var Visited : BooleanArray = BooleanArray(Macierz.Verticies.size)
@@ -225,6 +226,87 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        fun Dijkstry(Vstart : Int){
+            val NOV = Macierz.Verticies.size
+
+            var Cost : IntArray= IntArray(NOV)
+            var Prev : IntArray= IntArray(NOV)
+
+            var S : IntArray= IntArray(NOV)
+            var Q : IntArray= IntArray(NOV)
+
+            var u :Int = Vstart
+            var w :Vertex
+
+
+            for(i in 0..Q.size-1){
+                Q[i]=i
+            }
+
+            for(i in 0..Cost.size-1){
+                Cost[i]=9999
+            }
+            Cost[Vstart]=0
+
+            for(i in 0..Prev.size-1){
+                Prev[i]=-1
+            }
+
+            var QSum=1
+            var ConWeight : Int = 0
+
+            while(QSum>=1){
+
+                if(u>=NOV){
+                    break
+                }
+
+                ConWeight=0
+                for(i in 0..Macierz.Verticies[u].Connections.size-1){
+                    if(Macierz.Verticies[u].Connections[i]>ConWeight){
+                        ConWeight=Macierz.Verticies[u].Connections[i]
+                        u=i
+                    }
+                }
+
+                S[u]=Q[u]
+                Q[u]=-1
+
+                for(w in Macierz.Verticies[u].ConnectedTo){
+                    var NeV=w-1
+                    if(Q[NeV]!=-1){
+                        var wagakrawedzi=Macierz.Verticies[u].Connections[NeV]
+                        if(Cost[NeV]>(Cost[u]+wagakrawedzi)){
+                            Cost[NeV]=(Cost[u]+wagakrawedzi)
+                            Prev[NeV]=u
+                        }
+                    }
+                }
+
+                QSum=0
+                for(i in Q){
+                    if(i==-1){
+                        QSum++
+                    }
+                }
+
+            }
+            for(i in 0..NOV){
+                Label_Path.text=Label_Path.text.toString()+(i+1).toString()+": "
+                var j=i
+                var sptr=0
+                while(j>-1){
+                    S[sptr+1]=j
+                    j=Prev[j]
+                }
+                while(sptr>=1){
+                    Label_Path.text=Label_Path.text.toString()+S[sptr-1].toString()+" "
+                }
+                    Label_Path.text=Label_Path.text.toString()+"$"+Cost[i]+"\n"
+            }
+
+        }
+
         fun UpdateVertexInfo(){
 
             var str =""
@@ -253,6 +335,11 @@ class MainActivity : AppCompatActivity() {
             }else{
                 Label_Path.text="Ścieżka do samego siebie!"
             }
+        }
+
+        Button_Dijkstry.setOnClickListener(){
+            Label_Path.text=""
+                Dijkstry(SearchFrom-1)
         }
 
         Button_ConnectVertex.setOnClickListener(){
